@@ -1,0 +1,32 @@
+# Docker compose configuration for local development environment.
+
+# Docker services.
+services:
+  # Creates MySQL container for NetExpenseTracker backend.
+  mysql:
+    # Official MySQL image using version 8.0.
+    image: mysql:8.0
+
+    # Name of the MySQL container.
+    container_name: netexpensetracker_db
+
+    # Environment variables to initialize database. 
+    # Values are taken from .env file in root directory (hidden).
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE} # Name of MySQL database created when docker first runs.
+      MYSQL_USER: ${MYSQL_USER} # Database admin user.
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} # Database admin user password.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Required to properly create and use MySQL image.
+
+    # Defines port for MySQL image.
+    ports:
+      - "${MYSQL_PORT}:3306"
+
+    # Persist data between container restarts.
+    volumes:
+      - db_data:/var/lib/mysql
+
+# Docker volumes.
+volumes:
+  # Volume for persistent database storage.
+  db_data:

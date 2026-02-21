@@ -19,7 +19,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
     // HTTP method.
     Page<Expense> findByUserUserId(UUID userId, Pageable page);
 
-    // Retrieve a single expense by expense ID and user ID. Used for UPDATE
+    // Retrieve a single expense by expense ID and user ID. Used for PUT
     // and DELETE HTTP methods.
     Optional<Expense> findByUserUserIdAndExpenseId(UUID userId, UUID expenseId);
 

@@ -42,7 +42,7 @@ public class UserService {
         // error 409.
         if (userRepository.existsByEmail(lowerCaseEmail)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, 
-                "User already exists");
+                "User already exists.");
         }
 
         // Created user entity based on passed request.

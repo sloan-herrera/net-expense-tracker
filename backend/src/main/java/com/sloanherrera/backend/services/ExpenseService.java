@@ -1,6 +1,7 @@
 package com.sloanherrera.backend.services;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.sloanherrera.backend.dto.ExpenseRequest;
 import com.sloanherrera.backend.dto.ExpenseResponse;
 import com.sloanherrera.backend.models.Expense;
@@ -50,15 +50,16 @@ public class ExpenseService {
             // Define user by checking if it exists.
             User user = checkIfUserExists(userId);
             
-            // Data validation
+            // Data validation.
             validateAmount(req.getAmount());
             validateCategory(req.getCategory());
             validateDate(req.getDate());
 
             // Created expense entity based on passed request.
             Expense expense = new Expense(req.getName(),
-                req.getAmount(), req.getCategory(), req.getDate(),
-                user);
+                // Enforce two decimal places in JSON response.
+                req.getAmount().setScale(2, RoundingMode.HALF_UP), 
+                req.getCategory(), req.getDate(), user);
 
             // Save the expense to the database.
             Expense savedExpense = expenseRepository.save(expense);
@@ -73,7 +74,10 @@ public class ExpenseService {
     public Page<ExpenseResponse> readExpenses(UUID userId, int page, 
         Optional<String> category, Optional<Integer> month, 
         Optional<Integer> year) {
+            // Data validation.
             checkIfUserExists(userId);
+            validatePage(page);
+            validateMonthYear(month, year);
         
             // Contains pagination data. Page size will not be adjustable.
             Pageable pageable = PageRequest.of(page, PAGE_SIZE);
@@ -85,7 +89,7 @@ public class ExpenseService {
 
             // Both category and month filtering options are selected.
             // Corresponding endpoint:
-            // (/expenses?page=&category=&month=).
+            // (/expenses?userId=&page=&category=&month=).
             if(isFilteredByCategory && isFilteredByMonth) {
                 // Get beginning and end of selected month.
                 LocalDate start = LocalDate.of(year.get(), month.get(), 1);
@@ -97,7 +101,7 @@ public class ExpenseService {
                 );
             // Category filtering options are selected.
             // Corresponding endpoint:
-            // (/expenses?page=&category=).
+            // (/expenses?userId=&page=&category=).
             } else if (isFilteredByCategory) {
                 // Corresponding repository method to be returned.
                 pageResults = expenseRepository.findByUserUserIdAndCategory(
@@ -105,7 +109,7 @@ public class ExpenseService {
                 );
             // Month filtering options are selected.
             // Corresponding endpoint:
-            // (/expenses?page=&month=).
+            // (/expenses?userId=&page=&month=).
             } else if (isFilteredByMonth) {
                 // Get beginning and end of selected month.
                 LocalDate start = LocalDate.of(year.get(), month.get(), 1);
@@ -117,7 +121,7 @@ public class ExpenseService {
                 );
             // No filtering options are selected.
             // Corresponding endpoint:
-            // (/expenses?page=&size=10).
+            // (/expenses?userId=&page=).
             } else {
                 // Corresponding repository method to be returned.
                 pageResults = expenseRepository.findByUserUserId(userId, pageable);
@@ -139,7 +143,8 @@ public class ExpenseService {
 
         // Map the expense to the information received from the DTO.
         expense.setName(req.getName());
-        expense.setAmount(req.getAmount());
+        // Enforce two decimal places in JSON response.
+        expense.setAmount(req.getAmount().setScale(2, RoundingMode.HALF_UP));
         expense.setCategory(req.getCategory());
         expense.setDate(req.getDate());
 
@@ -208,7 +213,7 @@ public class ExpenseService {
         // Check if category is null. If it is, throw HTTP error 400.
         if (category == null || category.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category must" +
-                " not be null.");
+                " not be null or blank.");
         }
     }
 
@@ -224,6 +229,38 @@ public class ExpenseService {
         if (date.isAfter(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date cannot be" +
                 " in the future.");
+        }
+    }
+
+    // Validate page number.
+    private void validatePage(int page) {
+        // Check if page number is negative. If it is, throw HTTP error 400.
+        if (page < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page number" +
+                " cannot be negative.");
+        }
+    }
+
+    // Validate optional month and year parameters in URL.
+    private void validateMonthYear(Optional<Integer> month, Optional<Integer> year) {
+        // Check if both month and year are present in URL, as they are required together.
+        // If not, throw HTTP error 400.
+        if ((month.isPresent() && year.isEmpty()) || (month.isEmpty() && year.isPresent())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both month and" +
+                " year parameters are required in URL.");
+        }
+
+        // If both are present in URL.
+        if (month.isPresent() && year.isPresent()) {
+            // Assign month value to int for conditional.
+            int monthValue = month.get();
+
+            // Check if month is less than 1 (January) or greater than 12 (Decemeber).
+            // If they are, throw HTTP error 400.
+            if (monthValue < 1 || monthValue > 12) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Month" +
+                " parameter must be a valid month (01-12).");
+            }
         }
     }
 }

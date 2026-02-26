@@ -19,7 +19,8 @@ public class SecurityConfig {
     // without advanced configuration.
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) -> authorize
+        http.csrf((crsf) -> crsf.disable())
+            .authorizeHttpRequests((authorize) -> authorize
             .anyRequest().permitAll()).formLogin((form) -> form.disable())
             .httpBasic((basic) -> basic.disable());
         return http.build();

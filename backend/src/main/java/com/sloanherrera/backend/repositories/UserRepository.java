@@ -15,4 +15,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     // Search database for User entity with matching email for authentication
     // purposes.
     Optional<User> findByEmail(String email);
+
+    // Check if the User entity with matching email exists in the database for
+    // data validation purposes.
+    boolean existsByEmail(String email);
 }

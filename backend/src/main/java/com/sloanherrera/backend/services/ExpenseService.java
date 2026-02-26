@@ -1,5 +1,6 @@
 package com.sloanherrera.backend.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,7 +8,9 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.sloanherrera.backend.dto.ExpenseRequest;
 import com.sloanherrera.backend.dto.ExpenseResponse;
@@ -47,6 +50,11 @@ public class ExpenseService {
             // Define user by checking if it exists.
             User user = checkIfUserExists(userId);
             
+            // Data validation
+            validateAmount(req.getAmount());
+            validateCategory(req.getCategory());
+            validateDate(req.getDate());
+
             // Created expense entity based on passed request.
             Expense expense = new Expense(req.getName(),
                 req.getAmount(), req.getCategory(), req.getDate(),
@@ -124,6 +132,11 @@ public class ExpenseService {
         // Define expense by checking if it exists.
         Expense expense = checkIfExpenseExists(userId, expenseId);
 
+        // Data validation
+        validateAmount(req.getAmount());
+        validateCategory(req.getCategory());
+        validateDate(req.getDate());
+
         // Map the expense to the information received from the DTO.
         expense.setName(req.getName());
         expense.setAmount(req.getAmount());
@@ -156,16 +169,61 @@ public class ExpenseService {
 
     // Checks if the user exists.
     private User checkIfUserExists(UUID userId) {
-        // TO DO: Implement custom HTTP exception handling.
+        // If user does not exist, throw HTTP error 404.
         return userRepository.findById(userId).orElseThrow(() ->
-            new IllegalArgumentException("HTTP ERROR 404: User not found."));
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist."));
     }
 
     // Checks if the expense exists.
     private Expense checkIfExpenseExists(UUID userId, UUID expenseId) {
-        // TO DO: Implement custom HTTP exception handling.
+        // If expense does not exist, throw HTTP error 404.
         return expenseRepository.findByUserUserIdAndExpenseId(userId, expenseId)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "HTTP ERROR 404: Expense not found."));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                "Expense does not exist."));
+    }
+
+    // Validates amount field when creating or updating an expense.
+    private void validateAmount(BigDecimal amount) {
+        // Check if amount is null. If it is, throw HTTP error 400.
+        if (amount == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Amount must" +
+                " not be null.");
+        }
+
+        // Check if amount is less than or equal to 0. If it is, throw HTTP error 400.
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Amount must" +
+                " be greater than 0.");
+        }
+
+        // Check if amount has more than two decimal places. If it is, throw HTTP error 400.
+        if (amount.scale() > 2) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Amount cannot" +
+                " contain greater than two decimal places.");
+        }
+    }
+
+    // Validates category field when creating or updating an expense.
+    private void validateCategory(String category) {
+        // Check if category is null. If it is, throw HTTP error 400.
+        if (category == null || category.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category must" +
+                " not be null.");
+        }
+    }
+
+    // Validates date field when creating or updating an expense.
+    private void validateDate(LocalDate date) {
+        // Check if category is null. If it is, throw HTTP error 400.
+        if (date == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date must not" +
+                " be null.");
+        }
+
+        // Check if date is at a future time from request. If it is, throw HTTP error 400.
+        if (date.isAfter(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date cannot be" +
+                " in the future.");
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.sloanherrera.backend.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.sloanherrera.backend.dto.UserRequest;
 import com.sloanherrera.backend.dto.UserResponse;
@@ -35,6 +37,13 @@ public class UserService {
         String lowerCaseEmail = req.getEmail().toLowerCase();
         // Hash the password before storing for security purposes.
         String hashedPassword = passwordEncoder.encode(req.getPassword());
+
+        // Check for email duplicates. If there are duplicates, throw HTTP
+        // error 409.
+        if (userRepository.existsByEmail(lowerCaseEmail)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, 
+                "User already exists");
+        }
 
         // Created user entity based on passed request.
         User user = new User(lowerCaseEmail, hashedPassword);

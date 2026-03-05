@@ -1,32 +1,26 @@
-import { Container } from "react-bootstrap";
-import { Row } from "react-bootstrap";
-import { Col } from "react-bootstrap";
-import { Button } from "react-bootstrap";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SignIn from "./pages/SignInPage";
+import Register from "./pages/RegistrationPage";
+import Dashboard from "./pages/DashboardPage";
+import Contact from "./pages/ContactPage";
 
+// Entry point for the application acts as a routing hub for each page.
 function App() {
   return (
-    // Placeholder code to test if React Bootstrap works.
-    <>
-      <Container fluid>
-        <Row className="text-center">
-          <Col>
-            <h1>Welcome to NetExpenseTracker!</h1>
-          </Col>
-        </Row>
-        <Row className="text-center">
-          <Col>
-            <Button variant="outline-primary">Test Button 1</Button>
-          </Col>
-          <Col>
-            <Button variant="outline-primary">Test Button 2</Button>
-          </Col>
-          <Col>
-            <Button variant="outline-primary">Test Button 3</Button>
-          </Col>
-        </Row>
-      </Container>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        {/* Default page is the Sign In/Login page, as user account is required
+          to access other pages. */}
+        <Route path="/" element={<SignIn />} />
+        {/* Route to Registration/Register page. */}
+        <Route path="/registration" element={<Register />} />
+        {/* Route to Dashboard/Expenses page. */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Route to Contact page. */}
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

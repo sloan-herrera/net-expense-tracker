@@ -1,0 +1,8 @@
+/* Background is a fixed blue to indigo linear gradient with a minimum height of 100% of 
+viewport and margin set to 0. */
+body {
+    background: linear-gradient(135deg, #4159c4, #4a5592, #723da7);
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+}

@@ -6,7 +6,7 @@ function Contact() {
     <>
       {/* Reusable navigation bar component. */}
       <Navbar />
-      <h1 className="text-center text-light">Contact Support</h1>
+      <h1 className="text-center text-light mt-2">Contact Support</h1>
     </>
   );
 }

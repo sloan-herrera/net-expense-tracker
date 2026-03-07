@@ -13,8 +13,9 @@ function SignIn() {
 
   return (
     <>
-      {/* Container with dark border centered on the screen. */}
-      <Container className="border border-dark text-center mt-5 p-4">
+      <h1 className="text-center text-light mt-5 mb-5">NetExpenseTracker</h1>
+      {/* Container centered on the screen. */}
+      <Container className="text-center mt-5 p-4">
         {/* Row with large bottom margin. */}
         <Row className="mb-4">
           <Col>
@@ -24,10 +25,10 @@ function SignIn() {
         {/* Row with medium bottom margin. */}
         <Row className="mb-2">
           <Col>
-            {/* Rounded dark button with light text enabling the user to login. */}
+            {/* Rounded blue button with light text enabling the user to login. */}
             <Button
-              variant="dark"
-              className="rounded-pill text-light"
+              variant="primary"
+              className="rounded-pill text-light w-50"
               onClick={handleLogin}
             >
               Sign In
@@ -38,7 +39,7 @@ function SignIn() {
       <p className="text-light text-center mt-2 mb-1">Don't have an account?</p>
       {/* Link enabling user to create an account. */}
       <p className="text-center">
-        <Link to="/registration" className="text-light text-decoration-none">
+        <Link to="/registration" className="text-light text-decoration-ul">
           Register Here
         </Link>
       </p>

@@ -6,3 +6,8 @@ body {
     min-height: 100vh;
     margin: 0;
 }
+
+/* All containers given React Bootstrap's "dark" color. */
+.container {
+    background-color: #212529;
+}

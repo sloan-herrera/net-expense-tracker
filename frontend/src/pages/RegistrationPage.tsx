@@ -13,8 +13,9 @@ function Register() {
 
   return (
     <>
-      {/* Container with dark border centered on the screen. */}
-      <Container className="border border-dark text-center mt-5 p-4">
+      <h1 className="text-center text-light mt-5 mb-5">NetExpenseTracker</h1>
+      {/* Container centered on the screen. */}
+      <Container className="text-center mt-5 p-4">
         {/* Row with large bottom margin. */}
         <Row className="mb-4">
           <Col>
@@ -24,10 +25,10 @@ function Register() {
         {/* Row with medium bottom margin. */}
         <Row className="mb-2">
           <Col>
-            {/* Rounded dark button with light text enabling the user to create account. */}
+            {/* Rounded blue button with light text enabling the user to create account. */}
             <Button
-              variant="dark"
-              className="rounded-pill text-light"
+              variant="primary"
+              className="rounded-pill text-light w-50"
               onClick={handleRegistration}
             >
               Register
@@ -40,7 +41,7 @@ function Register() {
       </p>
       {/* Link enabling user to login. */}
       <p className="text-center">
-        <Link to="/" className="text-light text-decoration-none">
+        <Link to="/" className="text-light text-decoration-ul">
           Sign In Here
         </Link>
       </p>

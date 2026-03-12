@@ -6,10 +6,11 @@ import type { Expense } from "../types/types";
 // Define object for React Properties.
 type Properties = {
   expenses: Expense[];
+  openUpdateModal: () => void;
 };
 
 // Expense table component to enable user to view their expenses.
-function ExpenseTable({ expenses }: Properties) {
+function ExpenseTable({ expenses, openUpdateModal }: Properties) {
   return (
     <Container className="p-3 mt-5">
       <h3 className="text-center text-light mt-2">Expenses:</h3>
@@ -36,10 +37,14 @@ function ExpenseTable({ expenses }: Properties) {
                   <td>{expense.category}</td>
                   <td>{expense.date}</td>
                   {/* As shown in wireframes, there are two centered buttons representing 
-                  update and delete actions. Temporarily disabled, as they don't
-                  function yet. */}
+                  update and delete actions. Edit button opens update expense modal. Temporarily,
+                  delete button is disabled until API integration occurs. */}
                   <td className="d-flex justify-content-center gap-5">
-                    <Button variant="secondary" size="sm" disabled>
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      onClick={openUpdateModal}
+                    >
                       Edit
                     </Button>
                     <Button variant="danger" size="sm" disabled>

@@ -1,5 +1,7 @@
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import type { Expense } from "../types/types";
+import { useState } from "react";
+import { CATEGORIES, MONTHS } from "../constants/expenseConstants";
 
 //TO DO: Replace any frontend exclusive functionality with API calls.
 
@@ -11,10 +13,107 @@ type Properties = {
 
 // Expense table component to enable user to view their expenses.
 function ExpenseTable({ expenses, openUpdateModal }: Properties) {
+  // Set states for filtering values. Years are fetched from
+  // expense data from BE in Iteration 3.
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Resets filters.
+  function clearFilters(): void {
+    setSelectedCategory("");
+    setSelectedMonth("");
+    setCurrentPage(1);
+  }
+
+  // Routes to previous page of expenses if current page is greater than 1.
+  // Backend pagination logic will be integrated in Iteration 3.
+  function prevPage(): void {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  }
+
+  // Routes to next page of expenses.
+  // Backend pagination logic will be integrated in Iteration 3.
+  function nextPage(): void {
+    setCurrentPage(currentPage + 1);
+  }
+
   return (
     <Container className="p-3 mt-5">
       <h3 className="text-center text-light mt-2">Expenses:</h3>
-      <Row className="mt-4 mb-5">
+      {/* Expense filtering controls. */}
+      <Row className="d-flex align-items-end mt-5 mb-5 gap-3">
+        <Col md>
+          {/* Filter by category dropdown selection. Will be handled by backend
+          after integration. */}
+          <Form.Group>
+            <Form.Label className="text-light">Filter By Category:</Form.Label>
+            <Form.Select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="" disabled>
+                All Categories
+              </option>
+              {/* Map categories to stored constant values. */}
+              {CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        <Col md>
+          {/* Filter by month dropdown selection. Will be handled by backend
+          after integration. */}
+          <Form.Group>
+            <Form.Label className="text-light">Filter By Month:</Form.Label>
+            <Form.Select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            >
+              <option value="" disabled>
+                All Months
+              </option>
+              {/* Map months to stored constant values. */}
+              {MONTHS.map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        <Col md>
+          {/* Filter by year dropdown selection. Year will populate with data
+        fetched from backend. */}
+          <Form.Group>
+            <Form.Label className="text-light">Filter By Year:</Form.Label>
+            <Form.Select>
+              <option value="" disabled>
+                All Years
+              </option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        <Col md>
+          {/* Button to apply filters. Disabled until backend integration. */}
+          <Button variant="secondary" className="w-100" disabled>
+            Apply Filters
+          </Button>
+        </Col>
+        <Col md>
+          {/* Button to clear filters. Resets dropdown fields. Will reset query
+        filtering after backend integration. */}
+          <Button variant="secondary" className="w-100" onClick={clearFilters}>
+            Clear Filters
+          </Button>
+        </Col>
+      </Row>
+      <Row className="mt-5 mb-5">
         <Col md>
           <Table striped bordered hover variant="light">
             {/* Table header provides labeling for columns. */}
@@ -55,6 +154,30 @@ function ExpenseTable({ expenses, openUpdateModal }: Properties) {
               ))}
             </tbody>
           </Table>
+        </Col>
+      </Row>
+      {/* Pagination buttons. Placeholder logic is implemented currently, but will be updated
+      during Iteration 3 with backend integration. */}
+      <Row className="d-flex align-items-center mb-5 gap-2">
+        <Col md>
+          {/* Previous button. Button is disabled if current page is 1. */}
+          <Button
+            variant="secondary"
+            className="w-100"
+            onClick={prevPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+        </Col>
+        <Col md>
+          <p className="text-light text-center">Page {currentPage}</p>
+        </Col>
+        <Col md>
+          {/* Next button. */}
+          <Button variant="secondary" className="w-100" onClick={nextPage}>
+            Next
+          </Button>
         </Col>
       </Row>
     </Container>

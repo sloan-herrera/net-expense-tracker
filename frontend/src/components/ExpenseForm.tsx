@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import type { Expense } from "../types/types";
+import { CATEGORIES } from "../constants/expenseConstants";
 
 //TO DO: Replace any frontend exclusive functionality with API calls.
 
@@ -104,15 +105,12 @@ function ExpenseForm({ createExpense }: Properties) {
                 <option value="" disabled>
                   Category
                 </option>
-                <option value="Housing">Housing</option>
-                <option value="Utilities">Utilities</option>
-                <option value="Food">Food</option>
-                <option value="Transportation">Transportation</option>
-                <option value="Health">Health</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Subscriptions">Subscriptions</option>
-                <option value="Miscellaneous">Miscellaneous</option>
+                {/* Map categories to stored constant values. */}
+                {CATEGORIES.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
               </Form.Select>
             </Form.Group>
           </Col>

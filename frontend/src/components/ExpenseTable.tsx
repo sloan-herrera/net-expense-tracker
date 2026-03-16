@@ -1,4 +1,12 @@
-import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Table,
+} from "react-bootstrap";
 import type { Expense } from "../types/types";
 import { useState } from "react";
 import { CATEGORIES, MONTHS } from "../constants/expenseConstants";
@@ -101,59 +109,114 @@ function ExpenseTable({ expenses, openUpdateModal }: Properties) {
         </Col>
         <Col md>
           {/* Button to apply filters. Disabled until backend integration. */}
-          <Button variant="secondary" className="w-100" disabled>
+          <Button variant="secondary" className="rounded-pill w-100" disabled>
             Apply Filters
           </Button>
         </Col>
         <Col md>
           {/* Button to clear filters. Resets dropdown fields. Will reset query
         filtering after backend integration. */}
-          <Button variant="secondary" className="w-100" onClick={clearFilters}>
+          <Button
+            variant="secondary"
+            className="rounded-pill w-100"
+            onClick={clearFilters}
+          >
             Clear Filters
           </Button>
         </Col>
       </Row>
       <Row className="mt-5 mb-5">
         <Col md>
-          <Table striped bordered hover variant="light">
-            {/* Table header provides labeling for columns. */}
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Map expenses based on index of array so that it displays in 
-              the table. Later, this will be through API calls to backend. */}
-              {expenses.map((expense, index) => (
-                <tr key={index}>
-                  <td>{expense.name}</td>
-                  <td>${expense.amount}</td>
-                  <td>{expense.category}</td>
-                  <td>{expense.date}</td>
-                  {/* As shown in wireframes, there are two centered buttons representing 
+          {/* Card layout for smaller screen sizes. */}
+          <div className="d-md-none mb-3">
+            {/* Map expenses based on index of array so that it displays as 
+              cards. Later, this will be through API calls to backend. */}
+            {expenses.map((expense, index) => (
+              <Card key={index} className="mt-3">
+                <Card.Body>
+                  {/* Card title displays expense name. */}
+                  <Card.Title className="text-center mb-3">
+                    {expense.name}
+                  </Card.Title>
+                  <Card.Text className="mb-2">
+                    <b>Amount: </b>${expense.amount}
+                  </Card.Text>
+                  <Card.Text className="mb-2">
+                    <b>Category: </b>
+                    {expense.category}
+                  </Card.Text>
+                  <Card.Text className="mb-2">
+                    <b>Date: </b>
+                    {expense.date}
+                  </Card.Text>
+                  {/* As shown in wireframes, there are two stacked buttons representing 
                   update and delete actions. Edit button opens update expense modal. Temporarily,
                   delete button is disabled until API integration occurs. */}
-                  <td className="d-flex justify-content-center gap-5">
+                  <div className="d-flex flex-column gap-3">
                     <Button
                       variant="warning"
                       size="sm"
                       onClick={openUpdateModal}
+                      className="rounded-pill w-100"
                     >
                       Edit
                     </Button>
-                    <Button variant="danger" size="sm" disabled>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      className="rounded-pill w-100"
+                      disabled
+                    >
                       Delete
                     </Button>
-                  </td>
+                  </div>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+
+          {/* Table layout for larger screen sizes. */}
+          <div className="d-none d-md-block">
+            <Table striped bordered hover variant="light">
+              {/* Table header provides labeling for columns. */}
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Amount</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {/* Map expenses based on index of array so that it displays in 
+              the table. Later, this will be through API calls to backend. */}
+                {expenses.map((expense, index) => (
+                  <tr key={index}>
+                    <td>{expense.name}</td>
+                    <td>${expense.amount}</td>
+                    <td>{expense.category}</td>
+                    <td>{expense.date}</td>
+                    {/* As shown in wireframes, there are two centered buttons representing 
+                  update and delete actions. Edit button opens update expense modal. Temporarily,
+                  delete button is disabled until API integration occurs. */}
+                    <td className="d-flex justify-content-center gap-5">
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={openUpdateModal}
+                      >
+                        Edit
+                      </Button>
+                      <Button variant="danger" size="sm" disabled>
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </Col>
       </Row>
       {/* Pagination buttons. Placeholder logic is implemented currently, but will be updated
@@ -163,7 +226,7 @@ function ExpenseTable({ expenses, openUpdateModal }: Properties) {
           {/* Previous button. Button is disabled if current page is 1. */}
           <Button
             variant="secondary"
-            className="w-100"
+            className="rounded-pill w-100"
             onClick={prevPage}
             disabled={currentPage === 1}
           >
@@ -175,7 +238,11 @@ function ExpenseTable({ expenses, openUpdateModal }: Properties) {
         </Col>
         <Col md>
           {/* Next button. */}
-          <Button variant="secondary" className="w-100" onClick={nextPage}>
+          <Button
+            variant="secondary"
+            className="rounded-pill w-100"
+            onClick={nextPage}
+          >
             Next
           </Button>
         </Col>

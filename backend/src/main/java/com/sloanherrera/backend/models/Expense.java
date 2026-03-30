@@ -40,7 +40,7 @@ public class Expense {
     // Foreign key, representing the user that the expense is matched to. Columns
     // are joined on "user_id" from the "users" table.
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
 
     // Empty constructor, required by Spring Boot JPA.

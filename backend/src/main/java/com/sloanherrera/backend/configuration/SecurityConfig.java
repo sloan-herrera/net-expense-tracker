@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,9 +28,12 @@ public class SecurityConfig {
         // Enable CORS to allow frontend to communicate with backend.
         http.cors(Customizer.withDefaults())
 
-            // Enable CSRF protection for sessions.
+            // Enable CSRF protection for sessions while ignoring CSRF protection for public 
+            // endpoints.
             .csrf(csrf -> csrf.csrfTokenRepository(
-                CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                .ignoringRequestMatchers("/register", "/login"))
 
             // Define which endpoints are public and protected.
             .authorizeHttpRequests(auth -> auth
@@ -39,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 // Public endpoints (Do not require authentication).
-                .requestMatchers("/register", "/login").permitAll()
+                .requestMatchers("/register", "/login", "/csrf").permitAll()
 
                 // Protected endpoints (Require authentication).
                 .requestMatchers("/expenses/**", "/logout").authenticated()
@@ -47,7 +51,8 @@ public class SecurityConfig {
                 // Any other endpoints require authentication.
                 .anyRequest().authenticated())
             
-            // Disable default form login and basic authentication
+            // Disable default logout, form login, and basic authentication.
+            .logout(logout -> logout.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable());
                 
@@ -66,9 +71,8 @@ public class SecurityConfig {
         // Set permitted HTTP methods. OPTIONS is included to ensure CORS works.
         corsConfig.setAllowedMethods(List.of("POST", "GET", "PUT", "DELETE", "OPTIONS"));
 
-        // Set permitted JSON request headers. Content-Type is the default request
-        // header and X-CSRF-TOKEN ensures CSRF protection is enabled.
-        corsConfig.setAllowedHeaders(List.of("Content-Type", "X-CSRF-TOKEN"));
+        // Set permitted request headers to allow any.
+        corsConfig.setAllowedHeaders(List.of("*"));
 
         // Allow session cookies.
         corsConfig.setAllowCredentials(true);

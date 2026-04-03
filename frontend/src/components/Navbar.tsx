@@ -1,10 +1,29 @@
 // Importing Navbar as BootstrapNavbar removes naming conflict error.
 import { Navbar as BootstrapNavbar } from "react-bootstrap";
 import { Container, Nav } from "react-bootstrap";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { logoutUser } from "../services/authService";
 
 // Navigation bar component for dashboard and contact pages of NetExpenseTracker.
 function Navbar() {
+  // Used to navigate to other pages.
+  const navigate = useNavigate();
+
+  // Handles logout by calling backend logout endpoint.
+  const handleLogout = async () => {
+    // Attempt to call authService logoutUser function.
+    try {
+      await logoutUser();
+
+      // Redirect to sign-in page on logout.
+      navigate("/");
+      // If an error occurs, catch it, return the message, and alert user.
+    } catch (error) {
+      console.error("Error logging user out", error);
+      alert("Logout Failed.");
+    }
+  };
+
   return (
     <BootstrapNavbar bg="dark" variant="dark">
       {/* Navbar container changes to column layout on smaller screens. */}
@@ -30,7 +49,14 @@ function Navbar() {
           <Nav.Link as={NavLink} to="/contact">
             Contact
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/">
+          <Nav.Link
+            as={NavLink}
+            to="/"
+            onClick={async (e) => {
+              e.preventDefault(); // Prevent instant redirect before logout completes.
+              await handleLogout();
+            }}
+          >
             Logout
           </Nav.Link>
         </Nav>

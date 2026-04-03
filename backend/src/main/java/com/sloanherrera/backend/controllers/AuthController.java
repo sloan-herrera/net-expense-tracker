@@ -1,5 +1,12 @@
 package com.sloanherrera.backend.controllers;
 
+import java.util.Collections;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +49,22 @@ public class AuthController {
             session.setAttribute("userId", user.getUserId());
             session.setAttribute("userEmail", user.getEmail());
 
+            // Spring Security does not recognize custom session-based authentication.
+            // An authentication object to store in SecurityContext must be defined so
+            // protected endpoints can be reached without rejection.
+            UsernamePasswordAuthenticationToken auth = new 
+                UsernamePasswordAuthenticationToken(user.getEmail(), null, 
+                Collections.emptyList());
+
+            // Create SecurityContext instance to store authenticated user so that
+            // Spring Security keeps user authenticated across requests.
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+
+            // Store security context in the session.
+            session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+
             return user;
     }
 
@@ -50,5 +73,15 @@ public class AuthController {
     @PostMapping("/logout")
     public void logoutUser(HttpSession session) {
         session.invalidate();
+
+        // Clear security context after logout.
+        SecurityContextHolder.clearContext();
+    }
+
+    // Enables client to receive CSRF token so it can be used for protected
+    // requests.
+    @GetMapping("/csrf")
+    public CsrfToken getCsrfToken(CsrfToken token) {
+        return token;
     }
 }

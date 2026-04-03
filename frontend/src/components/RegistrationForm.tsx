@@ -1,12 +1,35 @@
+import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
 // Define object for React Properties.
 type Properties = {
-  handleSubmit: () => void;
+  handleSubmit: (email: string, password: string) => Promise<void>;
 };
 
 // Form for the registration page.
 function RegistrationForm({ handleSubmit }: Properties) {
+  // Set states for email and password.
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Handles form submission by preventing the page from refreshing and
+  // passing input values to registration page.
+  async function handleFormSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    // Check if values are empty. If they are, prevent registration attempt.
+    if (email === "" || password === "") {
+      return;
+    }
+
+    // Call handleSubmit function from registration page.
+    await handleSubmit(email, password);
+
+    // Reset values after registration attempt.
+    setEmail("");
+    setPassword("");
+  }
+
   return (
     <>
       {/* Container for registration form. */}
@@ -18,13 +41,20 @@ function RegistrationForm({ handleSubmit }: Properties) {
           </Col>
         </Row>
         {/* Form body. */}
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleFormSubmit}>
           {/* Row containing email input. */}
           <Row className="mb-4">
             <Col>
               <Form.Group>
                 <Form.Label className="text-light">Email:</Form.Label>
-                <Form.Control type="email" placeholder="Email Address" />
+                {/* Provide placeholder value and enable saving email of user. 
+                Reset after save. */}
+                <Form.Control
+                  type="email"
+                  placeholder="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </Form.Group>
             </Col>
           </Row>
@@ -33,7 +63,14 @@ function RegistrationForm({ handleSubmit }: Properties) {
             <Col>
               <Form.Group>
                 <Form.Label className="text-light">Password:</Form.Label>
-                <Form.Control type="password" placeholder="Password" />
+                {/* Provide placeholder value and enable saving password of user. 
+                Reset after save. */}
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </Form.Group>
             </Col>
           </Row>

@@ -1,14 +1,25 @@
 import { Link, useNavigate } from "react-router-dom";
 import SignInForm from "../components/SignInForm";
+import { loginUser } from "../services/authService";
 
 // Displays the content of the sign-in page.
 function SignIn() {
   // Used to navigate to other pages.
   const navigate = useNavigate();
-  // Handles login by redirecting user to expense dashboard on button
-  // click (temporary until authentication is implemented).
-  const handleLogin = () => {
-    navigate("/dashboard");
+
+  // Handles login by calling backend authentication endpoint.
+  const handleLogin = async (email: string, password: string) => {
+    // Attempt to call authService loginUser function with passed input.
+    try {
+      await loginUser({ email, password });
+
+      // Redirect to dashboard on login.
+      navigate("/dashboard");
+      // If an error occurs, catch it, return the message, and alert user.
+    } catch (error) {
+      console.error("Error logging user in", error);
+      alert("Login Failed.");
+    }
   };
 
   return (

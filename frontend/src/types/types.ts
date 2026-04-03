@@ -7,3 +7,10 @@ export type Expense = {
   category: string;
   date: string;
 };
+
+// Represents user data sent to backend for authentication.
+// Matches the shape of UserRequest DTO in backend.
+export type UserRequest = {
+  email: string;
+  password: string;
+};

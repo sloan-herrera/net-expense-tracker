@@ -2,30 +2,14 @@
 // API calls.
 
 import axios from "axios";
-import type { UserRequest } from "../types/types";
-
-// URL for backend API.
-const API_URL = import.meta.env.VITE_API_URL;
-
-// Retrieve CSRF token from backend to use in requests.
-async function getCsrfToken() {
-  // Attempt to call /csrf endpoint.
-  try {
-    const res = await axios.get(`${API_URL}/csrf`, {
-      withCredentials: true,
-    });
-
-    // Return the CSRF token.
-    return res.data.token;
-    // If an error occurs, catch it and return the message.
-  } catch (error) {
-    console.log("Error fetching CSRF token", error);
-    throw error;
-  }
-}
+import type { UserRequest, UserResponse } from "../types/types";
+import { API_URL } from "../constants/constants";
+import { getCsrfToken } from "./csrfService";
 
 // User registration API call.
-export async function registerUser(userData: UserRequest) {
+export async function registerUser(
+  userData: UserRequest,
+): Promise<UserResponse> {
   // Attempt to call /register endpoint with input data from UserRequest.
   try {
     const res = await axios.post(`${API_URL}/register`, userData, {
@@ -43,7 +27,7 @@ export async function registerUser(userData: UserRequest) {
 }
 
 // User login API call.
-export async function loginUser(userData: UserRequest) {
+export async function loginUser(userData: UserRequest): Promise<UserResponse> {
   // Attempt to call /login endpoint with input data from UserRequest.
   try {
     const res = await axios.post(`${API_URL}/login`, userData, {
@@ -61,7 +45,8 @@ export async function loginUser(userData: UserRequest) {
 }
 
 // User logout API call.
-export async function logoutUser() {
+export async function logoutUser(): Promise<void> {
+  // Retrieve and store CSRF token as constant.
   const token = await getCsrfToken();
 
   // Attempt to call /logout endpoint.

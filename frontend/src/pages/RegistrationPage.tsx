@@ -9,7 +9,7 @@ function Register() {
 
   // Handles registration by calling backend account creation endpoint.
   const handleRegistration = async (email: string, password: string) => {
-    // Attempt to call authService regiser function with passed input.
+    // Attempt to call authService register function with passed input.
     try {
       await registerUser({ email, password });
 

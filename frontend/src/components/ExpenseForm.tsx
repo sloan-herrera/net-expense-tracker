@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
-import type { Expense } from "../types/types";
-import { CATEGORIES } from "../constants/expenseConstants";
-
-//TO DO: Replace any frontend exclusive functionality with API calls.
+import type { ExpenseRequest } from "../types/types";
+import { CATEGORIES } from "../constants/constants";
 
 // Define object for React Properties.
 type Properties = {
-  createExpense: (expense: Expense) => void;
+  createExpense: (expenseData: ExpenseRequest) => Promise<void>;
 };
 
 // Expense form component for creating expenses.
@@ -26,8 +24,9 @@ function ExpenseForm({ createExpense }: Properties) {
   };
 
   // Handles form submission by preventing the page from refreshing, creating
-  // a new expense based on form input, and passing it to dashboard page.
-  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+  // a new expense based on form input, and passing it to dashboard page, which
+  // then passes it to backend.
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
     // Check if values are empty. If they are, prevent saving.
@@ -35,14 +34,16 @@ function ExpenseForm({ createExpense }: Properties) {
       return;
     }
 
+    // Place input data in newExpense object.
     const newExpense = {
       name,
-      amount,
+      amount: Number(amount),
       category,
       date,
     };
 
-    createExpense(newExpense);
+    // Pass newExpense object to dashboard to send to backend.
+    await createExpense(newExpense);
 
     // Reset after expense is created.
     setName("");
@@ -130,7 +131,7 @@ function ExpenseForm({ createExpense }: Properties) {
           {/* Center column in row using flexbox settings. */}
           <Col md className="d-flex justify-content-center">
             {/* Button submits information and sends to backend via POST
-                HTTP method. For now, it just generates the expense in the table. */}
+                HTTP method. */}
             <Button
               variant="primary"
               className="rounded-pill text-light w-50"

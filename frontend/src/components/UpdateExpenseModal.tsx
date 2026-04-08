@@ -8,20 +8,30 @@ import {
   Row,
 } from "react-bootstrap";
 import { useState } from "react";
+import type { Expense, ExpenseRequest } from "../types/types";
 
 // Define object for React Properties.
 type Properties = {
   show: boolean;
+  selectedExpense: Expense | null;
   handleClose: () => void;
+  updateExpense: (expenseData: ExpenseRequest) => Promise<void>;
 };
 
 // Update expense modal component for updating expenses.
-function UpdateExpenseModal({ show, handleClose }: Properties) {
-  // Set states to enable saving of values.
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
-  const [date, setDate] = useState("");
+function UpdateExpenseModal({
+  show,
+  selectedExpense,
+  handleClose,
+  updateExpense,
+}: Properties) {
+  // Set states to enable saving of values. Includes default values.
+  const [name, setName] = useState(selectedExpense?.name ?? "");
+  const [amount, setAmount] = useState(
+    selectedExpense?.amount.toFixed(2) ?? "",
+  );
+  const [category, setCategory] = useState(selectedExpense?.category ?? "");
+  const [date, setDate] = useState(selectedExpense?.date ?? "");
 
   // Formats the amount, ensuring it is always number and displays two decimal places.
   const formatAmount = (): void => {
@@ -30,13 +40,26 @@ function UpdateExpenseModal({ show, handleClose }: Properties) {
     }
   };
 
-  // Handles form submission by preventing the page from refreshing.
-  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+  // Handles form submission by preventing the page from refreshing and updating the
+  // expense through the backend.
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // TO DO: Implement expense editing functionality in Iteration 3 with API integration.
+    // Check if values are empty. If they are, prevent saving.
+    if (name === "" || amount === "" || category === "" || date === "") {
+      return;
+    }
 
-    handleClose();
+    // Place updated expense data in updatedExpense object.
+    const updatedExpense = {
+      name,
+      amount: Number(amount),
+      category,
+      date,
+    };
+
+    // Pass updatedExpense object to dashboard to send to backend.
+    await updateExpense(updatedExpense);
   }
 
   return (

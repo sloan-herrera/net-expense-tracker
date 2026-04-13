@@ -132,3 +132,17 @@ export function validateExpense(
   // Expense input is valid.
   return { isValid: true, message: "" };
 }
+
+// Validates contact form input.
+export function validateContactMessage(contactMessage: string) {
+  // Trim leading and trailing spaces in contact message input.
+  const trimmedMessage = contactMessage.trim();
+
+  // Check if contact message is empty.
+  if (trimmedMessage === "") {
+    return { isValid: false, message: "Message is required." };
+  }
+
+  // Contact message is valid.
+  return { isValid: true, message: "" };
+}

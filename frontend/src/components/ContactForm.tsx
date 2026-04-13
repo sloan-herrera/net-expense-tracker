@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { validateContactMessage } from "../validation/validation";
 
 // Form for the contact page.
 function ContactForm() {
@@ -10,16 +11,20 @@ function ContactForm() {
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Check if message is empty. If it is, prevent sending.
-    if (message === "") {
+    // Validate message input before submission attempt.
+    const validation = validateContactMessage(message);
+
+    // If validation fails, alert user and prevent submission.
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
-    // Open user's email client and send to support email address.
-    // Placeholder email used for now, as support email address has not
-    // been created.
-    // TO DO: Create support email address and replace placeholder.
-    window.location.href = "mailto:netexpensesupport@test.com?body=" + message;
+    // Open user's email client and sends message to support email address.
+    // encodeURIComponent ensures the whitespace and special characters persist in the message.
+    window.location.href =
+      "mailto:netexpensetracker.support@gmail.com?subject=NetExpenseTracker Support Request&body=" +
+      encodeURIComponent(message);
 
     // Reset message field.
     setMessage("");

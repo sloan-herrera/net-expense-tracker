@@ -9,6 +9,8 @@ import {
 } from "react-bootstrap";
 import { useState } from "react";
 import type { Expense, ExpenseRequest } from "../types/types";
+import { validateExpense } from "../validation/validation";
+import { CATEGORIES } from "../constants/constants";
 
 // Define object for React Properties.
 type Properties = {
@@ -45,14 +47,18 @@ function UpdateExpenseModal({
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Check if values are empty. If they are, prevent saving.
-    if (name === "" || amount === "" || category === "" || date === "") {
+    // Validate expense input before submission attempt.
+    const validation = validateExpense(name, amount, category, date);
+
+    // If validation fails, alert user and prevent submission.
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
     // Place updated expense data in updatedExpense object.
     const updatedExpense = {
-      name,
+      name: name.trim(),
       amount: Number(amount),
       category,
       date,
@@ -92,7 +98,7 @@ function UpdateExpenseModal({
                     {/* Display dollar amount. Other currencies are not supported. */}
                     <InputGroup.Text>$</InputGroup.Text>
                     {/* Ensures a minimum value of zero, that the amount changes to the
-                            proper format, and is saved. */}
+                    proper format, and is saved. */}
                     <Form.Control
                       type="number"
                       step="0.01"
@@ -119,15 +125,12 @@ function UpdateExpenseModal({
                     <option value="" disabled>
                       Category
                     </option>
-                    <option value="Housing">Housing</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Food">Food</option>
-                    <option value="Transportation">Transportation</option>
-                    <option value="Health">Health</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Subscriptions">Subscriptions</option>
-                    <option value="Miscellaneous">Miscellaneous</option>
+                    {/* Map categories to stored constant values. */}
+                    {CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -147,7 +150,7 @@ function UpdateExpenseModal({
               {/* Center column in row using flexbox settings. */}
               <Col md className="d-flex justify-content-center">
                 {/* Button submits information and sends to backend via PUT
-                        HTTP method. For now, it just closes the modal. */}
+                HTTP method. */}
                 <Button
                   variant="primary"
                   className="rounded-pill text-light w-50"

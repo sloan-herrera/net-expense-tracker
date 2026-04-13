@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import type { ExpenseRequest } from "../types/types";
 import { CATEGORIES } from "../constants/constants";
+import { validateExpense } from "../validation/validation";
 
 // Define object for React Properties.
 type Properties = {
@@ -29,14 +30,18 @@ function ExpenseForm({ createExpense }: Properties) {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Check if values are empty. If they are, prevent saving.
-    if (name === "" || amount === "" || category === "" || date === "") {
+    // Validate expense input before submission attempt.
+    const validation = validateExpense(name, amount, category, date);
+
+    // If validation fails, alert user and prevent submission.
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
     // Place input data in newExpense object.
     const newExpense = {
-      name,
+      name: name.trim(),
       amount: Number(amount),
       category,
       date,

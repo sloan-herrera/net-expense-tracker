@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { validateRegistration } from "../validation/validation";
 
 // Define object for React Properties.
 type Properties = {
@@ -17,13 +18,17 @@ function RegistrationForm({ handleSubmit }: Properties) {
   async function handleFormSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Check if values are empty. If they are, prevent registration attempt.
-    if (email === "" || password === "") {
+    // Validate registration input before submission attempt.
+    const validation = validateRegistration(email, password);
+
+    // If validation fails, alert user and prevent submission.
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
     // Call handleSubmit function from registration page.
-    await handleSubmit(email, password);
+    await handleSubmit(email.trim(), password);
 
     // Reset values after registration attempt.
     setEmail("");

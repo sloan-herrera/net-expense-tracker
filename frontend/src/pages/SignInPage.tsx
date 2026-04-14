@@ -2,8 +2,13 @@ import { Link, useNavigate } from "react-router-dom";
 import SignInForm from "../components/SignInForm";
 import { loginUser } from "../services/authService";
 
+// Define object for React Properties
+type Properties = {
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+};
+
 // Displays the content of the sign-in page.
-function SignIn() {
+function SignIn({ setIsAuthenticated }: Properties) {
   // Used to navigate to other pages.
   const navigate = useNavigate();
 
@@ -12,6 +17,9 @@ function SignIn() {
     // Attempt to call authService loginUser function with passed input.
     try {
       await loginUser({ email, password });
+
+      // Store authentication state on successful login.
+      setIsAuthenticated(true);
 
       // Redirect to dashboard on login.
       navigate("/dashboard");

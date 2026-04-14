@@ -4,8 +4,13 @@ import { Container, Nav } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
 import { logoutUser } from "../services/authService";
 
+// Define object for React Properties
+type Properties = {
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+};
+
 // Navigation bar component for dashboard and contact pages of NetExpenseTracker.
-function Navbar() {
+function Navbar({ setIsAuthenticated }: Properties) {
   // Used to navigate to other pages.
   const navigate = useNavigate();
 
@@ -14,6 +19,9 @@ function Navbar() {
     // Attempt to call authService logoutUser function.
     try {
       await logoutUser();
+
+      // Clear authentication state on successful logout.
+      setIsAuthenticated(false);
 
       // Redirect to sign-in page on logout.
       navigate("/");

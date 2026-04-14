@@ -11,8 +11,13 @@ import {
   deleteExpense as deleteExpenseAPI,
 } from "../services/expenseService";
 
+// Define object for React Properties
+type Properties = {
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+};
+
 // Displays content of the dashboard page.
-function Dashboard() {
+function Dashboard({ setIsAuthenticated }: Properties) {
   // Set state for expenses using the Expense type as an array.
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
@@ -222,7 +227,7 @@ function Dashboard() {
   return (
     <>
       {/* Reusable navigation bar component. */}
-      <Navbar />
+      <Navbar setIsAuthenticated={setIsAuthenticated} />
       <h1 className="text-center text-light mt-2 mb-5">
         Welcome to NetExpenseTracker!
       </h1>

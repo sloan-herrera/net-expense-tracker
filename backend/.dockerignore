@@ -1,0 +1,10 @@
+# Ignore build
+target
+
+# Ignore Git files
+.gitattributes
+.gitignore
+
+# Ignore IDE settings
+.vscode
+.idea

@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,14 +24,16 @@ public class SecurityConfig {
     // HTTP security and authentication configuration.
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // Set CSRF cookie settings.
+        CookieCsrfTokenRepository csrfRepo = new CookieCsrfTokenRepository();
+        csrfRepo.setCookieCustomizer((cookie) -> cookie.sameSite("none").secure(true));
+        
         // Enable CORS to allow frontend to communicate with backend.
         http.cors(Customizer.withDefaults())
 
             // Enable CSRF protection for sessions while ignoring CSRF protection for public 
             // endpoints.
-            .csrf(csrf -> csrf.csrfTokenRepository(
-                CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+            .csrf(csrf -> csrf.csrfTokenRepository(csrfRepo)
                 .ignoringRequestMatchers("/register", "/login"))
 
             // Define which endpoints are public and protected.

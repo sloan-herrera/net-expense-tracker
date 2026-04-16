@@ -65,8 +65,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
 
-        // Allow cross-origin resource sharing for frontend URL.
-        corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Allow cross-origin resource sharing for local frontend and deployed frontend.
+        corsConfig.setAllowedOrigins(List.of("http://localhost:5173",
+            "https://netexpensetracker.vercel.app"));
 
         // Set permitted HTTP methods. OPTIONS is included to ensure CORS works.
         corsConfig.setAllowedMethods(List.of("POST", "GET", "PUT", "DELETE", "OPTIONS"));

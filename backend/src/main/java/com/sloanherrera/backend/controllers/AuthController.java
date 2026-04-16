@@ -5,6 +5,8 @@ import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,8 @@ import com.sloanherrera.backend.dto.UserRequest;
 import com.sloanherrera.backend.dto.UserResponse;
 import com.sloanherrera.backend.services.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
@@ -24,6 +28,8 @@ import jakarta.servlet.http.HttpSession;
 public class AuthController {
     // Declared as final so that the variables are never reassigned.
     private final UserService userService;
+    private final SecurityContextRepository securityContextRepository = 
+        new HttpSessionSecurityContextRepository();
 
     // Constructor assigns user service.
     public AuthController(UserService userService) {
@@ -40,8 +46,8 @@ public class AuthController {
     // Represents POST HTTP method for user login. Authenticates
     // user and stores user data in session.
     @PostMapping("/login")
-    public UserResponse loginUser(@RequestBody UserRequest req, HttpSession 
-        session) {
+    public UserResponse loginUser(@RequestBody UserRequest req, HttpServletRequest request, 
+        HttpServletResponse response, HttpSession session) {
             // UserResponse DTO to be returned, calling UserService loginUser() method.
             UserResponse user = userService.loginUser(req);
 
@@ -63,7 +69,7 @@ public class AuthController {
             SecurityContextHolder.setContext(context);
 
             // Store security context in the session.
-            session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+            securityContextRepository.saveContext(context, request, response);
 
             return user;
     }

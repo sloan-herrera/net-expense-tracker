@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -80,7 +81,7 @@ public class ExpenseService {
             validateMonthYear(month, year);
         
             // Contains pagination data. Page size will not be adjustable.
-            Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+            Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("date").descending());
             Page<Expense> pageResults; // Page of expenses to be assigned and returned.
 
             // To check if the optional parameters exist and are not null.

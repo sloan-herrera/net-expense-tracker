@@ -19,6 +19,7 @@ Users can register a new account to begin using the application.
 - View expenses in a responsive layout (table on desktop, cards on mobile).
 - Filter expenses by category, month, and year.
 - Pagination support for navigating large sets of expenses.
+- Expenses are displayed in descending order by date (most recent first).
 - Frontend and backend validation for user and expense input.
 - Secure password storage using BCrypt hashing.
 - CSRF protection enabled for secure requests.

@@ -68,7 +68,7 @@ public class SecurityConfig {
 
         // Allow cross-origin resource sharing for local frontend and deployed frontend.
         corsConfig.setAllowedOrigins(List.of("http://localhost:5173",
-            "https://netexpensetracker.vercel.app"));
+            "https://netexpensetracker.dev"));
 
         // Set permitted HTTP methods. OPTIONS is included to ensure CORS works.
         corsConfig.setAllowedMethods(List.of("POST", "GET", "PUT", "DELETE", "OPTIONS"));

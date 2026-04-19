@@ -27,7 +27,7 @@ Users can register a new account to begin using the application.
 
 ## How to Use
 
-1. Open the application:
+1. Open the application:  
     https://netexpensetracker.dev
 
 2. Register a new account:
@@ -125,14 +125,19 @@ Users can register a new account to begin using the application.
 
 3. Configure environment variables:
     - Root .env (Docker & MySQL):
+        ```env
         MYSQL_DATABASE=netexpensetracker
         MYSQL_USER=netexpenseuser
         MYSQL_PASSWORD=netexpensepassword
         MYSQL_ROOT_PASSWORD=rootpassword
         MYSQL_PORT=3306
+        ```
     - Frontend .env:
+        ```env
         VITE_API_URL=http://localhost:8080
+        ```
     - application-local.properties:
+        ```env
         spring.datasource.url=jdbc:mysql://localhost:3306/netexpensetracker?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
         spring.datasource.username=netexpenseuser
         spring.datasource.password=netexpensepassword
@@ -140,45 +145,57 @@ Users can register a new account to begin using the application.
         spring.jpa.hibernate.ddl-auto=update
         spring.jpa.show-sql=true
         spring.jpa.properties.hibernate.format_sql=true
+        ```
 
 4. Start MySQL using Docker:
     - To start MySQL container in terminal:
+        ```bash
         docker compose up -d
-    WARNING: Docker Desktop must be running in the background on Windows.
+        ```
+    
+    WARNING: Docker Desktop must be running in the background on Windows.  
     WARNING: If you already have MySQL running on port 3306, stop the service.
 
     - To stop the container:
+        ```bash
         docker compose down
+        ```
 
     - To stop the container and remove all data from the database:
+        ```bash
         docker compose down -v
+        ```
 
 5. Install all dependencies and run the backend:
     - To run the backend:
+        ```bash
         cd ./backend
         ./mvnw clean install
         ./mvnw spring-boot:run
+        ```
 
     - To stop running the backend:
         Ctrl + C in terminal running backend.
 
-    - The backend will run on:
+    - The backend will run on:  
         http://localhost:8080
 
 6. Install all dependencies and run the frontend:
     - To run the frontend:
+        ```bash
         cd ./frontend
         npm install
         npm run dev
+        ```
 
     - To stop running the frontend:
         Ctrl + C in the terminal running frontend.
 
-    - The frontend will run on:
+    - The frontend will run on:  
         http://localhost:5173
 
 7. Open the application:
-    - In a web browser, enter: 
+    - In a web browser, enter:  
         http://localhost:5173
 
 ## Future Improvements
@@ -188,7 +205,7 @@ Users can register a new account to begin using the application.
 - Prompt user if they are sure they want to delete an expense.
 
 ## Author
-Sloan Herrera
+Sloan Herrera  
 B.S. Computer Science - Wilmington University
 
 ## License

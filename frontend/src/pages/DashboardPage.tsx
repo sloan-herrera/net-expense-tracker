@@ -10,6 +10,7 @@ import {
   updateExpense as updateExpenseAPI,
   deleteExpense as deleteExpenseAPI,
 } from "../services/expenseService";
+import DeleteExpenseModal from "../components/DeleteExpenseModal";
 
 // Define object for React Properties
 type Properties = {
@@ -24,8 +25,10 @@ function Dashboard({ setIsAuthenticated }: Properties) {
   // Set state for showing update expense modal.
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  // Store and set state for selected expense for editing in dashboard. Initially set to
-  // null until UpdateExpenseModal is open.
+  // Set state for showing delete expense modal.
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Store and set state for selected expense for updating or deleting in dashboard.
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   // Store and set state for current page and total pages.
@@ -94,10 +97,20 @@ function Dashboard({ setIsAuthenticated }: Properties) {
     setShowUpdateModal(true);
   }
 
-  // Closes update modal and clears the selected expense and edit state.
+  // Closes update modal.
   function closeUpdateModal(): void {
-    setSelectedExpense(null);
     setShowUpdateModal(false);
+  }
+
+  // Opens delete modal and initializes the selected expense for deleting.
+  function openDeleteModal(expense: Expense): void {
+    setSelectedExpense(expense);
+    setShowDeleteModal(true);
+  }
+
+  // Closes delete modal.
+  function closeDeleteModal(): void {
+    setShowDeleteModal(false);
   }
 
   // Updates selected expense through backend and reload the UI to include updated
@@ -135,6 +148,7 @@ function Dashboard({ setIsAuthenticated }: Properties) {
     // filters (if any are active).
     try {
       await deleteExpenseAPI(expenseId);
+      closeDeleteModal(); // Close DeleteExpenseModal after expense is deleted.
       await loadExpenses(
         currentPage,
         selectedCategory,
@@ -242,7 +256,7 @@ function Dashboard({ setIsAuthenticated }: Properties) {
         currentPage={currentPage}
         totalPages={totalPages}
         openUpdateModal={openUpdateModal}
-        deleteExpense={deleteExpense}
+        openDeleteModal={openDeleteModal}
         setSelectedCategory={setSelectedCategory}
         setSelectedMonth={setSelectedMonth}
         setSelectedYear={setSelectedYear}
@@ -258,6 +272,13 @@ function Dashboard({ setIsAuthenticated }: Properties) {
         selectedExpense={selectedExpense}
         handleClose={closeUpdateModal}
         updateExpense={updateExpense}
+      />
+      {/* DeleteExpenseModal called through page with passed parameters. */}
+      <DeleteExpenseModal
+        show={showDeleteModal}
+        selectedExpense={selectedExpense}
+        handleClose={closeDeleteModal}
+        deleteExpense={deleteExpense}
       />
     </>
   );

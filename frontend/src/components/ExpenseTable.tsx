@@ -19,7 +19,7 @@ type Properties = {
   currentPage: number;
   totalPages: number;
   openUpdateModal: (expense: Expense) => void;
-  deleteExpense: (expenseId: string) => Promise<void>;
+  openDeleteModal: (expense: Expense) => void;
   setSelectedCategory: (category: string) => void;
   setSelectedMonth: (month: number | undefined) => void;
   setSelectedYear: (year: number | undefined) => void;
@@ -38,7 +38,7 @@ function ExpenseTable({
   currentPage,
   totalPages,
   openUpdateModal,
-  deleteExpense,
+  openDeleteModal,
   setSelectedCategory,
   setSelectedMonth,
   setSelectedYear,
@@ -192,7 +192,7 @@ function ExpenseTable({
                         variant="danger"
                         size="sm"
                         className="rounded-pill w-100"
-                        onClick={() => deleteExpense(expense.expenseId)}
+                        onClick={() => openDeleteModal(expense)}
                       >
                         Delete
                       </Button>
@@ -244,7 +244,7 @@ function ExpenseTable({
                           variant="danger"
                           size="sm"
                           className="rounded-pill w-100"
-                          onClick={() => deleteExpense(expense.expenseId)}
+                          onClick={() => openDeleteModal(expense)}
                         >
                           Delete
                         </Button>
